@@ -26,7 +26,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT balance FROM account WHERE user_id = @userId", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE user_id = @userId", conn);
                     cmd.Parameters.AddWithValue("@userId", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -43,7 +43,6 @@ namespace TenmoServer.DAO
 
             return returnBalance;
         }
-
 
         private Account GetAccountFromReader(SqlDataReader reader)
         {
