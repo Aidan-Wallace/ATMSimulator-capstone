@@ -74,6 +74,7 @@ namespace TenmoClient
             if (menuSelection == 1)
             {
                 // View your current balance
+                GetBalance();
             }
 
             if (menuSelection == 2)
@@ -156,6 +157,14 @@ namespace TenmoClient
             {
                 console.PrintError("Registration was unsuccessful.");
             }
+            console.Pause();
+        }
+
+        private void GetBalance()
+        {
+            decimal balance = tenmoApiService.GetBalance();
+
+            Console.WriteLine($"Your current account balance is: {balance.ToString("C2")}\n");
             console.Pause();
         }
     }
