@@ -26,7 +26,7 @@ namespace TenmoServer.Controllers
             return Ok(accountDao.GetBalance(userId));
         }
 
-        [HttpPost]
+        [HttpPost("{transfer}")]
         public ActionResult<bool> SendMoney(int fromUserId, int toUserId, decimal transferAmount)
         {
             return Ok(accountDao.SendMoney(fromUserId, toUserId, transferAmount));
