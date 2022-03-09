@@ -9,6 +9,7 @@ using TenmoServer.DAO;
 namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
+    
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -23,6 +24,12 @@ namespace TenmoServer.Controllers
         //public IActionResult<decimal> GetBalance(int userId)
         {
             return Ok(accountDao.GetBalance(userId));
+        }
+
+        [HttpPost]
+        public ActionResult<bool> SendMoney(int fromUserId, int toUserId, decimal transferAmount)
+        {
+            return Ok(accountDao.SendMoney(fromUserId, toUserId, transferAmount));
         }
     }
 }

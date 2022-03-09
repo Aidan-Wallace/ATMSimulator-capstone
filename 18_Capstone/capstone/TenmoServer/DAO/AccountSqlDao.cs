@@ -18,8 +18,14 @@ namespace TenmoServer.DAO
 
         public decimal GetBalance(int userId)
         {
-            decimal returnBalance = 0m;
+            decimal returnBalance = GetAccount(userId).Balance;
 
+            return returnBalance;
+        }
+
+        public Account GetAccount(int userId)
+        {
+            Account account = new Account();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -32,7 +38,7 @@ namespace TenmoServer.DAO
 
                     if (reader.Read())
                     {
-                        returnBalance = GetAccountFromReader(reader).Balance;
+                        account = GetAccountFromReader(reader);
                     }
                 }
             }
@@ -40,8 +46,44 @@ namespace TenmoServer.DAO
             {
                 throw;
             }
+            return account;
+        }
 
-            return returnBalance;
+        public bool SendMoney(int fromUserId, int toUserId, decimal transferAmount)
+        {
+            Transfer transfer = new Transfer();
+
+            Account fromAcct = GetAccount(fromUserId);
+            Account toAcct = GetAccount(toUserId);
+            int fromAcctId = fromAcct.UserId;
+            int toAcctId = toAcct.UserId;
+            if (transferAmount <= fromAcct.Balance)
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        SqlCommand cmd = new SqlCommand("INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(2, 2, @fromAcctId, @toAcctId, @amount); UPDATE account SET balance -= @amount WHERE account_id = @fromAcctId; UPDATE account SET balance += @amount WHERE account_id = @toAcctId", conn);
+                        cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
+                        cmd.Parameters.AddWithValue("toAcctId", toAcctId);
+                        cmd.Parameters.AddWithValue("@amount", transferAmount);
+
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            return true;
+                        }
+                    }
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+            }
+            return false;
         }
 
         private Account GetAccountFromReader(SqlDataReader reader)
