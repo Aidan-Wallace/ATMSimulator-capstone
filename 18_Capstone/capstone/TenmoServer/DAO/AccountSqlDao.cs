@@ -89,7 +89,6 @@ namespace TenmoServer.DAO
 
         public List<CompletedTransfer> GetTransfers(int userId)
         {
-            
 
             List<CompletedTransfer> transfersFrom = GetTransfersFrom(userId);
             foreach (CompletedTransfer transfer in transfersFrom)
