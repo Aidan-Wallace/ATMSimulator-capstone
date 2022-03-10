@@ -15,6 +15,7 @@ namespace TenmoServer.DAO
         {
             connectionString = dbConnectionString;
         }
+        private List<CompletedTransfer> completedTransfers = new List<CompletedTransfer>();
 
         public decimal GetBalance(int userId)
         {
@@ -88,9 +89,20 @@ namespace TenmoServer.DAO
 
         public List<CompletedTransfer> GetTransfers(int userId)
         {
-            List<CompletedTransfer> completedTransfers = new List<CompletedTransfer>();
+            
 
             List<CompletedTransfer> transfersFrom = GetTransfersFrom(userId);
+            foreach (CompletedTransfer transfer in transfersFrom)
+            {
+                completedTransfers.Add(transfer);
+            }
+
+            List<CompletedTransfer> transfersTo = GetTransfersTo(userId);
+            foreach(CompletedTransfer transfer in transfersTo)
+            {
+                completedTransfers.Add(transfer);
+            }
+            OrganizeList();
 
             return completedTransfers;
         }
@@ -115,6 +127,37 @@ namespace TenmoServer.DAO
                     while (reader.Read())
                     {
                         CompletedTransfer transfer = GetTransfersReceivedFromReader(reader);
+                        transfers.Add(transfer);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transfers;
+        }
+
+        public List<CompletedTransfer> GetTransfersTo(int userId)
+        {
+            List<CompletedTransfer> transfers = new List<CompletedTransfer>();
+
+            Account acct = GetAccount(userId);
+            int acctId = acct.AcctId;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand($"SELECT transfer_id, account_to, amount FROM transfer WHERE account_from = {acctId} AND transfer_status_id = 2", conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        CompletedTransfer transfer = GetTransfersToFromReader(reader);
                         transfers.Add(transfer);
                     }
                 }
@@ -159,6 +202,32 @@ namespace TenmoServer.DAO
             };
 
             return account;
+        }
+
+        public void OrganizeList()
+        {
+            List<int> order = new List<int>();
+
+            List<CompletedTransfer> result = new List<CompletedTransfer>();
+
+            foreach (CompletedTransfer item in completedTransfers)
+            {
+                order.Add(item.TransferId);
+            }
+            order.Sort();
+            foreach (int item in order)
+            {
+                foreach (CompletedTransfer transfer in completedTransfers)
+                {
+                    if (item == transfer.TransferId)
+                    {
+                        result.Add(transfer);
+                        break;
+                    }
+
+                }
+            }
+            completedTransfers = result;
         }
     }
 }
