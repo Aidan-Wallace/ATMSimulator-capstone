@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TenmoServer.DAO;
+using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
@@ -27,9 +28,9 @@ namespace TenmoServer.Controllers
         }
 
         [HttpPost("{transfer}")]
-        public ActionResult<bool> SendMoney(int fromUserId, int toUserId, decimal transferAmount)
+        public ActionResult<bool> SendMoney(TransferMoney transfer)
         {
-            return Ok(accountDao.SendMoney(fromUserId, toUserId, transferAmount));
+            return Ok(accountDao.SendMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
         }
     }
 }

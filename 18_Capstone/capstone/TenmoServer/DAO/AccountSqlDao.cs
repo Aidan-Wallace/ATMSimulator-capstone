@@ -55,8 +55,8 @@ namespace TenmoServer.DAO
 
             Account fromAcct = GetAccount(fromUserId);
             Account toAcct = GetAccount(toUserId);
-            int fromAcctId = fromAcct.UserId;
-            int toAcctId = toAcct.UserId;
+            int fromAcctId = fromAcct.AcctId;
+            int toAcctId = toAcct.AcctId;
             if (transferAmount <= fromAcct.Balance)
             {
                 try
@@ -70,9 +70,9 @@ namespace TenmoServer.DAO
                         cmd.Parameters.AddWithValue("toAcctId", toAcctId);
                         cmd.Parameters.AddWithValue("@amount", transferAmount);
 
-                        SqlDataReader reader = cmd.ExecuteReader();
+                        int rows = cmd.ExecuteNonQuery();
 
-                        if (reader.Read())
+                        if (rows > 0)
                         {
                             return true;
                         }
