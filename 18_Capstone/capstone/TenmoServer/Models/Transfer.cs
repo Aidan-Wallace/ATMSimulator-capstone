@@ -23,4 +23,12 @@ namespace TenmoServer.Models
         public int ToUserId { get; set; }
         public decimal TransferAmount { get; set; }
     }
+
+    public class CompletedTransfer
+    {
+        public int TransferId { get; set; }
+        public string Type { get; set; }
+        public int UserId { get; set; }
+        public decimal Amount { get; set; }
+    }
 }

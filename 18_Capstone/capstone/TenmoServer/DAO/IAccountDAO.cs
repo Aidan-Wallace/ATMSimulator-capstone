@@ -7,5 +7,7 @@ namespace TenmoServer.DAO
     {
         decimal GetBalance(int userId);
         bool SendMoney(int fromUserId, int toUserId, decimal transferAmount);
+
+        List<CompletedTransfer> GetTransfers(int userId);
     }
 }
