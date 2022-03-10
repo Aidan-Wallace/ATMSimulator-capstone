@@ -52,7 +52,20 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
+        public void PrintSendMoneyMenu(List<User> users)
+        {
+            Console.Clear();
+            Console.WriteLine("|-------------- Users --------------|");
+            Console.WriteLine("|    Id | Username                  |");
+            Console.WriteLine("|-------+---------------------------|");
 
-
+            // Loop to display users goes here:
+            foreach (User user in users)
+            {
+                string template = $"|  {user.UserId} | {user.Username}                   |";
+                Console.WriteLine(template);
+            }
+            Console.WriteLine("|-----------------------------------|");
+        }
     }
 }

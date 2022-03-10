@@ -34,5 +34,55 @@ namespace TenmoClient.Services
                 return response.Data;
             }
         }
+
+        public bool SendMoney(int toUserId, decimal amount)
+        {
+            TransferMoney transfer = new TransferMoney()
+            {
+                FromUserId = UserId,
+                ToUserId = toUserId,
+                TransferAmount = amount,
+            };
+
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer");
+            request.AddJsonBody(transfer);
+
+            IRestResponse<bool> response = client.Get<bool>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        public List<User> GetUsers()
+        {
+            //List<User> users = new List<User>();
+
+            RestRequest request = new RestRequest($"{ApiUrl}/user");
+
+            IRestResponse<List<User>> response = client.Get<List<User>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
     }
 }

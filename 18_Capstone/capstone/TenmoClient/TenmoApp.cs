@@ -90,6 +90,7 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
+                SendMoney();
             }
 
             if (menuSelection == 5)
@@ -165,6 +166,25 @@ namespace TenmoClient
             decimal balance = tenmoApiService.GetBalance();
 
             Console.WriteLine($"Your current account balance is: {balance.ToString("C2")}\n");
+            console.Pause();
+        }
+
+        public void SendMoney()
+        {
+            console.PrintSendMoneyMenu(tenmoApiService.GetUsers());
+
+
+            int toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]: ", 1001, 1999);
+            decimal amount = console.PromptForDecimal("Enter amount to send: ");
+
+            if (tenmoApiService.SendMoney(toUserId, amount))
+            {
+                Console.WriteLine("Transfer was successful.\n");
+            }
+            else
+            {
+                Console.WriteLine($"Transfer was not successful.\n");
+            }
             console.Pause();
         }
     }
