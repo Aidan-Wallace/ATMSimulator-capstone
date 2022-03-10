@@ -173,9 +173,9 @@ namespace TenmoClient
         {
             console.PrintSendMoneyMenu(tenmoApiService.GetUsers());
 
-
-            int toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]: ", 1001, 1999);
-            decimal amount = console.PromptForDecimal("Enter amount to send: ");
+            // TODO - add default to [0]
+            int toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999);
+            decimal amount = console.PromptForDecimal("Enter amount to send");
 
             if (tenmoApiService.SendMoney(toUserId, amount))
             {

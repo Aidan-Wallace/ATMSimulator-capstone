@@ -62,7 +62,7 @@ namespace TenmoClient.Services
             // Loop to display users goes here:
             foreach (User user in users)
             {
-                string template = $"|  {user.UserId} | {user.Username}                   |";
+                string template = $"|  {user.UserId} | {user.Username.PadRight(26)}|";
                 Console.WriteLine(template);
             }
             Console.WriteLine("|-----------------------------------|");

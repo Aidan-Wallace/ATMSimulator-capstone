@@ -47,7 +47,7 @@ namespace TenmoClient.Services
             RestRequest request = new RestRequest($"{ApiUrl}/account/transfer");
             request.AddJsonBody(transfer);
 
-            IRestResponse<bool> response = client.Get<bool>(request);
+            IRestResponse<bool> response = client.Post<bool>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
@@ -65,8 +65,6 @@ namespace TenmoClient.Services
 
         public List<User> GetUsers()
         {
-            //List<User> users = new List<User>();
-
             RestRequest request = new RestRequest($"{ApiUrl}/user");
 
             IRestResponse<List<User>> response = client.Get<List<User>>(request);
