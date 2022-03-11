@@ -189,12 +189,12 @@ namespace TenmoClient
         public void SendMoney()
         {
             List<User> users = tenmoApiService.GetUsers();
-            int toUserId;
+            int toUserId = 0;
 
             console.PrintSendMoneyMenu(tenmoApiService.UserId, users);
 
-
-            while (true)
+            bool isIdFound = false;
+            while (!isIdFound)
             {
                 toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999);
                 if (toUserId == tenmoApiService.UserId)
@@ -202,14 +202,17 @@ namespace TenmoClient
                     Console.WriteLine("Please enter a valid ID. You cannot send money to yourself.");
                     continue;
                 }
+
                 foreach (User user in users)
                 {
                     if (user.UserId == toUserId)
                     {
-
+                        isIdFound = true;
+                        continue;
                     }
                 }
 
+                if (!isIdFound) Console.WriteLine("Please enter a valid ID.");
             }
 
             decimal amount = console.PromptForDecimal("Enter amount to send");
