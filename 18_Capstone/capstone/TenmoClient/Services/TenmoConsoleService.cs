@@ -87,9 +87,18 @@ namespace TenmoClient.Services
             Console.WriteLine("---------");
         }
 
-        internal void PrintTransferDetails(int menuOption)
+        internal void PrintTransferDetails(Transfer transfer)
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            Console.WriteLine(" --------------------------------------------");
+            Console.WriteLine(" Transfer Details");
+            Console.WriteLine(" --------------------------------------------");
+            Console.WriteLine($" Id: {transfer.TransferId}");
+            Console.WriteLine($" From: {transfer.FromUsername}");
+            Console.WriteLine($" To: {transfer.ToUsername}");
+            Console.WriteLine($" Type: {transfer.TransferTypeDescription}");
+            Console.WriteLine($" Status: {transfer.TransferStatusDescription}");
+            Console.WriteLine($" Amount: {transfer.TransferAmount.ToString("C2")}");
         }
     }
 }

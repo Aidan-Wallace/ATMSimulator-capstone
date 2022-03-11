@@ -179,8 +179,12 @@ namespace TenmoClient
         
             if (menuOption == 0) return;
 
-            console.PrintTransferDetails(menuOption);
+            Transfer transfer = tenmoApiService.GetTansferById(menuOption);
+
+            console.PrintTransferDetails(transfer);
+            console.Pause();
         }
+
 
         public void SendMoney()
         {
