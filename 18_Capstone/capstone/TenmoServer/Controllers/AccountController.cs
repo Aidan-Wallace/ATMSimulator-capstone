@@ -33,6 +33,12 @@ namespace TenmoServer.Controllers
             return accountDao.GetTransfers(userId);
         }
 
+        [HttpGet("transfer/{transferId}")]
+        public ActionResult<Transfer> GetTransferDetails(int transferId)
+        {
+            return accountDao.GetTransferById(transferId);
+        }
+
         [HttpPost("{transfer}")]
         public ActionResult<bool> SendMoney(TransferMoney transfer)
         {

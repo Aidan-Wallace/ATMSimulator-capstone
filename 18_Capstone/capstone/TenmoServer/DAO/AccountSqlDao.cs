@@ -87,6 +87,37 @@ namespace TenmoServer.DAO
             return false;
         }
 
+        public Transfer GetTransferById(int id)
+        {
+            Transfer transfer = new Transfer();
+
+            string sql = "SELECT transfer_id, uf.username from_username, ut.username to_username, transfer_type_desc, transfer_status_desc, amount FROM transfer t JOIN transfer_type tt on t.transfer_type_id = tt.transfer_type_id JOIN transfer_status ts on t.transfer_status_id = ts.transfer_status_id JOIN account af on account_from = af.account_id JOIN account a on account_to = a.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON a.user_id = ut.user_id WHERE t.transfer_id = @transfer_id;";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@transfer_id", id);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        transfer = (GetTransferDetailsFromReader(reader));
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return transfer;
+        }
+
         public List<CompletedTransfer> GetTransfers(int userId)
         {
 
@@ -97,13 +128,27 @@ namespace TenmoServer.DAO
             }
 
             List<CompletedTransfer> transfersTo = GetTransfersTo(userId);
-            foreach(CompletedTransfer transfer in transfersTo)
+            foreach (CompletedTransfer transfer in transfersTo)
             {
                 completedTransfers.Add(transfer);
             }
             OrganizeList();
 
             return completedTransfers;
+        }
+
+        public Transfer GetTransferDetailsFromReader(SqlDataReader reader)
+        {
+            Transfer transfer = new Transfer()
+            {
+                TransferId = Convert.ToInt32(reader["transfer_id"]),
+                FromUsername = Convert.ToString(reader["from_username"]),
+                ToUsername = Convert.ToString(reader["to_username"]),
+                TransferTypeDescription = Convert.ToString(reader["transfer_type_desc"]),
+                TransferStatusDescription = Convert.ToString(reader["transfer_status_desc"]),
+                TransferAmount = Convert.ToDecimal(reader["amount"])
+            };
+            return transfer;
         }
 
         public List<CompletedTransfer> GetTransfersFrom(int userId)
