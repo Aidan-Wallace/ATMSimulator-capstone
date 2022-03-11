@@ -77,17 +77,17 @@ namespace TenmoClient.Services
             Console.WriteLine("-------------------------------------------");
 
             // Loop to display users goes here:
-            foreach(CompletedTransfer transfer in transfers)
-            {
-                // transfer id
-                // transfer type
-                // amount
-                Console.WriteLine($"{transfer.TransferId}          {transfer.Type}{/*username*/}          $ {transfer.Amount}");
-            }
+            //foreach(CompletedTransfer transfer in transfers)
+            //{
+            //    // transfer id
+            //    // transfer type
+            //    // amount
+            //    Console.WriteLine($"{transfer.TransferId}          {transfer.Type}{/*username*/}          $ {transfer.Amount}");
+            //}
 
 
 
-            Console.WriteLine("---------");
+            //Console.WriteLine("---------");
         }
     }
 }

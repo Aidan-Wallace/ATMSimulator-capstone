@@ -28,7 +28,6 @@ namespace TenmoServer.Models
     {
         public int TransferId { get; set; }
         public string Type { get; set; }
-        public int UserId { get; set; }
         public string Username { get; set; }
         public decimal Amount { get; set; }
     }
