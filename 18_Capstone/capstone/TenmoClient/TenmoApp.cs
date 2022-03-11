@@ -80,6 +80,7 @@ namespace TenmoClient
             if (menuSelection == 2)
             {
                 // View your past transfers
+                ViewTransfers();
             }
 
             if (menuSelection == 3)
@@ -167,6 +168,11 @@ namespace TenmoClient
 
             Console.WriteLine($"Your current account balance is: {balance.ToString("C2")}\n");
             console.Pause();
+        }
+
+        public void ViewTransfers()
+        {
+
         }
 
         public void SendMoney()

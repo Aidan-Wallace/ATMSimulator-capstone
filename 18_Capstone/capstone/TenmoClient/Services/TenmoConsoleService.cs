@@ -67,5 +67,27 @@ namespace TenmoClient.Services
             }
             Console.WriteLine("|-----------------------------------|");
         }
+
+        public void PrintGetTransfersMenu(List<CompletedTransfer> transfers)
+        {
+            Console.Clear();
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("Transfers");
+            Console.WriteLine("ID From/ To                 Amount");
+            Console.WriteLine("-------------------------------------------");
+
+            // Loop to display users goes here:
+            foreach(CompletedTransfer transfer in transfers)
+            {
+                // transfer id
+                // transfer type
+                // amount
+                Console.WriteLine($"{transfer.TransferId}          {transfer.Type}{/*username*/}          $ {transfer.Amount}");
+            }
+
+
+
+            Console.WriteLine("---------");
+        }
     }
 }

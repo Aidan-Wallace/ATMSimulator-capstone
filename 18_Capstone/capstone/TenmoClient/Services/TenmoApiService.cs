@@ -12,7 +12,6 @@ namespace TenmoClient.Services
         public TenmoApiService(string apiUrl) : base(apiUrl) { }
 
         // Add methods to call api here...
-
         public decimal GetBalance()
         {
             Account account = new Account();
@@ -20,6 +19,26 @@ namespace TenmoClient.Services
             RestRequest request = new RestRequest($"{ApiUrl}/account/{UserId}");
 
             IRestResponse<decimal> response = client.Get<decimal>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        public List<CompletedTransfer> GetTransfers()
+        {
+            RestRequest request = new RestRequest($"{ApiUrl}/{UserId}/transfers");
+
+            IRestResponse<List<CompletedTransfer>> response = client.Get<List<CompletedTransfer>>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {

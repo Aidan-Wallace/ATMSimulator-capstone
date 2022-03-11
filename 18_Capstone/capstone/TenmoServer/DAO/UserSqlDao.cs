@@ -17,6 +17,35 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
+        public string GetUsername(int userId)
+        {
+            string sql = $"select [username] from tenmo_user where [user_id] = {userId}";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        return Convert.ToString(reader["username"]);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
+
         public User GetUser(string username)
         {
             User returnUser = null;
