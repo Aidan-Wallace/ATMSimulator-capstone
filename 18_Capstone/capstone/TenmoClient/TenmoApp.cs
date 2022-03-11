@@ -176,7 +176,7 @@ namespace TenmoClient
 
             console.PrintGetTransfersMenu(transfers);
             int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)");
-        
+
             if (menuOption == 0) return;
 
             Transfer transfer = tenmoApiService.GetTansferById(menuOption);
@@ -188,10 +188,30 @@ namespace TenmoClient
 
         public void SendMoney()
         {
-            console.PrintSendMoneyMenu(tenmoApiService.GetUsers());
+            List<User> users = tenmoApiService.GetUsers();
+            int toUserId;
 
-            // TODO - add default to [0]
-            int toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999);
+            console.PrintSendMoneyMenu(tenmoApiService.UserId, users);
+
+
+            while (true)
+            {
+                toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999);
+                if (toUserId == tenmoApiService.UserId)
+                {
+                    Console.WriteLine("Please enter a valid ID. You cannot send money to yourself.");
+                    continue;
+                }
+                foreach (User user in users)
+                {
+                    if (user.UserId == toUserId)
+                    {
+
+                    }
+                }
+
+            }
+
             decimal amount = console.PromptForDecimal("Enter amount to send");
 
             if (tenmoApiService.SendMoney(toUserId, amount))

@@ -52,7 +52,7 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
-        public void PrintSendMoneyMenu(List<User> users)
+        public void PrintSendMoneyMenu(int currentUserId, List<User> users)
         {
             Console.Clear();
             Console.WriteLine("|-------------- Users --------------|");
@@ -62,6 +62,8 @@ namespace TenmoClient.Services
             // Loop to display users goes here:
             foreach (User user in users)
             {
+                if (user.UserId == currentUserId) continue;
+
                 string template = $"|  {user.UserId} | {user.Username.PadRight(26)}|";
                 Console.WriteLine(template);
             }
@@ -79,9 +81,7 @@ namespace TenmoClient.Services
             //Loop to display users goes here:
             foreach (CompletedTransfer transfer in transfers)
             {
-                // transfer id
-                // transfer type
-                // amount
+               
                 Console.WriteLine($" {transfer.TransferId}          {transfer.Type.PadRight(6)}{transfer.Username.PadRight(15)}{transfer.Amount.ToString("C2").PadLeft(6)}");
             }
             Console.WriteLine("---------");
