@@ -76,18 +76,20 @@ namespace TenmoClient.Services
             Console.WriteLine("ID From/ To                 Amount");
             Console.WriteLine("-------------------------------------------");
 
-            // Loop to display users goes here:
-            //foreach(CompletedTransfer transfer in transfers)
-            //{
-            //    // transfer id
-            //    // transfer type
-            //    // amount
-            //    Console.WriteLine($"{transfer.TransferId}          {transfer.Type}{/*username*/}          $ {transfer.Amount}");
-            //}
+            //Loop to display users goes here:
+            foreach (CompletedTransfer transfer in transfers)
+            {
+                // transfer id
+                // transfer type
+                // amount
+                Console.WriteLine($"{transfer.TransferId}          {transfer.Type.PadRight(6)}{transfer.Username}          $ {transfer.Amount}");
+            }
+            Console.WriteLine("---------");
+        }
 
-
-
-            //Console.WriteLine("---------");
+        internal void PrintTransferDetails(int menuOption)
+        {
+            throw new NotImplementedException();
         }
     }
 }

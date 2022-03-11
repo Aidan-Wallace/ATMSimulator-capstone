@@ -172,7 +172,14 @@ namespace TenmoClient
 
         public void ViewTransfers()
         {
+            List<CompletedTransfer> transfers = tenmoApiService.GetTransfers();
 
+            console.PrintGetTransfersMenu(transfers);
+            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)");
+        
+            if (menuOption == 0) return;
+
+            console.PrintTransferDetails(menuOption);
         }
 
         public void SendMoney()
