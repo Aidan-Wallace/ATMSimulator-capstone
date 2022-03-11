@@ -71,10 +71,10 @@ namespace TenmoClient.Services
         public void PrintGetTransfersMenu(List<CompletedTransfer> transfers)
         {
             Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("Transfers");
-            Console.WriteLine("ID From/ To                 Amount");
-            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" Transfers");
+            Console.WriteLine(" ID             From/To              Amount ");
+            Console.WriteLine(" -------------------------------------------");
 
             //Loop to display users goes here:
             foreach (CompletedTransfer transfer in transfers)
@@ -82,7 +82,7 @@ namespace TenmoClient.Services
                 // transfer id
                 // transfer type
                 // amount
-                Console.WriteLine($"{transfer.TransferId}          {transfer.Type.PadRight(6)}{transfer.Username}          $ {transfer.Amount}");
+                Console.WriteLine($" {transfer.TransferId}          {transfer.Type.PadRight(6)}{transfer.Username.PadRight(15)}{transfer.Amount.ToString("C2").PadLeft(6)}");
             }
             Console.WriteLine("---------");
         }

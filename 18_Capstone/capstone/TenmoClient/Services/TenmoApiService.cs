@@ -36,7 +36,7 @@ namespace TenmoClient.Services
 
         public List<CompletedTransfer> GetTransfers()
         {
-            RestRequest request = new RestRequest($"{ApiUrl}/{UserId}/transfers");
+            RestRequest request = new RestRequest($"{ApiUrl}/account/{UserId}/transfers");
 
             IRestResponse<List<CompletedTransfer>> response = client.Get<List<CompletedTransfer>>(request);
 
