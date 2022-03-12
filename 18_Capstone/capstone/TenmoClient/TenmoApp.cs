@@ -166,7 +166,9 @@ namespace TenmoClient
         {
             decimal balance = tenmoApiService.GetBalance();
 
-            Console.WriteLine($"Your current account balance is: {balance.ToString("C2")}\n");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($" Your current account balance is: {balance.ToString("C2")}\n");
+            Console.ResetColor();
             console.Pause();
         }
 
@@ -197,7 +199,7 @@ namespace TenmoClient
             bool isIdFound = false;
             while (!isIdFound)
             {
-                toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999, 0);
+                toUserId = console.PromptForInteger("Please enter id of the user you are sending to", 1001, 1999, 0);
                 if (toUserId == tenmoApiService.UserId)
                 {
                     

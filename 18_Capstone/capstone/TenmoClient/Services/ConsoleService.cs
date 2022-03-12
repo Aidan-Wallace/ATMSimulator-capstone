@@ -44,7 +44,7 @@ namespace TenmoClient.Services
         {
             if (message == null)
             {
-                message = "Press any key to continue:";
+                message = " Press any key to continue:";
             }
             Console.Write(message);
             Console.ReadKey();
@@ -76,7 +76,7 @@ namespace TenmoClient.Services
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{message}{defaultPrompt}");
+                Console.Write($" {message}{defaultPrompt}");
                 Console.ResetColor();
                 string input = Console.ReadLine();
 
@@ -90,7 +90,7 @@ namespace TenmoClient.Services
                 {
                     return selection;
                 }
-                PrintError($"Number is out of range, please try again.");
+                PrintError($" Number is out of range, please try again.");
             }
         }
 
@@ -104,7 +104,7 @@ namespace TenmoClient.Services
         {
             string defaultPrompt = defaultValue == null ? ": " : $"[{defaultValue}]: ";
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"{message}{defaultPrompt}");
+            Console.Write($" {message}{defaultPrompt}");
             Console.ResetColor();
             string input = Console.ReadLine();
             // Did the user take the default value?
@@ -124,7 +124,7 @@ namespace TenmoClient.Services
         {
             string pass = "";
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"{message}: ");
+            Console.Write($" {message}: ");
             Console.ResetColor();
 
             ConsoleKeyInfo key;
@@ -165,7 +165,7 @@ namespace TenmoClient.Services
             {
                 string defaultPrompt = defaultValue.HasValue ? $"[{defaultValue:d}]: " : ": ";
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{message}{defaultPrompt}");
+                Console.Write($" {message}{defaultPrompt}");
                 Console.ResetColor();
                 string input = Console.ReadLine();
 
@@ -195,7 +195,7 @@ namespace TenmoClient.Services
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{message}{defaultPrompt}");
+                Console.Write($" {message}{defaultPrompt}");
                 Console.ResetColor();
                 string input = Console.ReadLine();
 
@@ -209,7 +209,7 @@ namespace TenmoClient.Services
                 {
                     return selection;
                 }
-                PrintError($"Invalid number, please try again.");
+                PrintError($" Invalid number, please try again.");
             }
         }
 
@@ -225,7 +225,7 @@ namespace TenmoClient.Services
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{message}{defaultPrompt}");
+                Console.Write($" {message}{defaultPrompt}");
                 Console.ResetColor();
                 string input = Console.ReadLine();
 
@@ -239,7 +239,7 @@ namespace TenmoClient.Services
                 {
                     return selection;
                 }
-                PrintError($"Invalid number, please try again.");
+                PrintError($" Invalid number, please try again.");
             }
         }
     }

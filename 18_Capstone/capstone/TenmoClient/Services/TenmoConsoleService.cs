@@ -13,35 +13,35 @@ namespace TenmoClient.Services
         {
             Console.Clear();
             Console.WriteLine("");
-            Console.WriteLine("Welcome to TEnmo!");
-            Console.WriteLine("1: Login");
-            Console.WriteLine("2: Register");
-            Console.WriteLine("0: Exit");
-            Console.WriteLine("---------");
+            Console.WriteLine(" Welcome to TEnmo!");
+            Console.WriteLine(" 1: Login");
+            Console.WriteLine(" 2: Register");
+            Console.WriteLine(" 0: Exit");
+            Console.WriteLine(" ---------");
         }
 
         public void PrintMainMenu(string username)
         {
             Console.Clear();
             Console.WriteLine("");
-            Console.WriteLine($"Hello, {username}!");
-            Console.WriteLine("1: View your current balance");
-            Console.WriteLine("2: View your past transfers");
-            Console.WriteLine("3: View your pending requests");
-            Console.WriteLine("4: Send TE bucks");
-            Console.WriteLine("5: Request TE bucks");
-            Console.WriteLine("6: Log out");
-            Console.WriteLine("0: Exit");
-            Console.WriteLine("---------");
+            Console.WriteLine($" Hello, {username}!");
+            Console.WriteLine(" 1: View your current balance");
+            Console.WriteLine(" 2: View your past transfers");
+            Console.WriteLine(" 3: View your pending requests");
+            Console.WriteLine(" 4: Send TE bucks");
+            Console.WriteLine(" 5: Request TE bucks");
+            Console.WriteLine(" 6: Log out");
+            Console.WriteLine(" 0: Exit");
+            Console.WriteLine(" ---------");
         }
         public LoginUser PromptForLogin()
         {
-            string username = PromptForString("User name");
+            string username = PromptForString(" User name");
             if (String.IsNullOrWhiteSpace(username))
             {
                 return null;
             }
-            string password = PromptForHiddenString("Password");
+            string password = PromptForHiddenString(" Password");
 
             LoginUser loginUser = new LoginUser
             {
@@ -55,9 +55,9 @@ namespace TenmoClient.Services
         public void PrintSendMoneyMenu(int currentUserId, List<User> users)
         {
             Console.Clear();
-            Console.WriteLine("|-------------- Users --------------|");
-            Console.WriteLine("|    Id | Username                  |");
-            Console.WriteLine("|-------+---------------------------|");
+            Console.WriteLine(" |-------------- Users --------------|");
+            Console.WriteLine(" |    Id | Username                  |");
+            Console.WriteLine(" |-------+---------------------------|");
 
             // Loop to display users goes here:
             foreach (User user in users)
@@ -65,10 +65,10 @@ namespace TenmoClient.Services
                 //will not display current user
                 if (user.UserId == currentUserId) continue;
 
-                string template = $"|  {user.UserId} | {user.Username.PadRight(26)}|";
+                string template = $" |  {user.UserId} | {user.Username.PadRight(26)}|";
                 Console.WriteLine(template);
             }
-            Console.WriteLine("|-----------------------------------|");
+            Console.WriteLine(" |-----------------------------------|");
         }
 
         public void PrintGetTransfersMenu(string currentUsername, List<CompletedTransfer> transfers)
@@ -92,7 +92,7 @@ namespace TenmoClient.Services
                     Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
                 }
             }
-            Console.WriteLine("---------");
+            Console.WriteLine(" ---------");
         }
 
         internal void PrintTransferDetails(Transfer transfer)
