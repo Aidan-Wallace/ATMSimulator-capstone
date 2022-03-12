@@ -81,6 +81,7 @@ namespace TenmoClient.Services
             //Loop to display users goes here:
             foreach (CompletedTransfer transfer in transfers)
             {
+                //Distinguishes money sent BY the user and money sent TO the user
                 if (currentUsername == transfer.FromUsername)
                 {
                     Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");

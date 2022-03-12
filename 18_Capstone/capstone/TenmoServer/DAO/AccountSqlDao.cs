@@ -17,6 +17,7 @@ namespace TenmoServer.DAO
         }
         private List<CompletedTransfer> completedTransfers = new List<CompletedTransfer>();
 
+        //Gets current user's account balance
         public decimal GetBalance(int userId)
         {
             decimal returnBalance = GetAccount(userId).Balance;
@@ -24,6 +25,7 @@ namespace TenmoServer.DAO
             return returnBalance;
         }
 
+        //Gets account info by userId
         public Account GetAccount(int userId)
         {
             Account account = new Account();
@@ -50,6 +52,7 @@ namespace TenmoServer.DAO
             return account;
         }
 
+        //Sends money to another user
         public bool SendMoney(int fromUserId, int toUserId, decimal transferAmount)
         {
             Transfer transfer = new Transfer();
@@ -88,6 +91,7 @@ namespace TenmoServer.DAO
             return false;
         }
 
+        //Get Transfer details by transferId
         public Transfer GetTransferById(int id)
         {
             Transfer transfer = new Transfer();
@@ -119,6 +123,7 @@ namespace TenmoServer.DAO
             return transfer;
         }
 
+        //Gets list of all the logged in users completed transfers
         public List<CompletedTransfer> GetTransfers(int userId)
         {
             Account userAcct = GetAccount(userId);
@@ -152,6 +157,8 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
+        
+        //Gets a CompletedTransfer from SqlDataReader for GetTransfers
         private CompletedTransfer GetCompletedTransferFromReader(SqlDataReader reader)
         {
             CompletedTransfer transfer = new CompletedTransfer()
@@ -164,7 +171,7 @@ namespace TenmoServer.DAO
             return transfer;
         }
 
-        
+        //Gets Details of Transfer from SqlDataReader for GetTransferById
         public Transfer GetTransferDetailsFromReader(SqlDataReader reader)
         {
             Transfer transfer = new Transfer()
@@ -178,6 +185,8 @@ namespace TenmoServer.DAO
             };
             return transfer;
         }
+        
+        //Gets Account details from SqlDataReader for GetAccount
         private Account GetAccountFromReader(SqlDataReader reader)
         {
             Account account = new Account()
@@ -188,32 +197,6 @@ namespace TenmoServer.DAO
             };
 
             return account;
-        }
-
-        public void OrganizeList()
-        {
-            List<int> order = new List<int>();
-
-            List<CompletedTransfer> result = new List<CompletedTransfer>();
-
-            foreach (CompletedTransfer item in completedTransfers)
-            {
-                order.Add(item.TransferId);
-            }
-            order.Sort();
-            foreach (int item in order)
-            {
-                foreach (CompletedTransfer transfer in completedTransfers)
-                {
-                    if (item == transfer.TransferId)
-                    {
-                        result.Add(transfer);
-                        break;
-                    }
-
-                }
-            }
-            completedTransfers = result;
         }
     }
 }
