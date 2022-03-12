@@ -62,6 +62,7 @@ namespace TenmoClient.Services
             // Loop to display users goes here:
             foreach (User user in users)
             {
+                //will not display current user
                 if (user.UserId == currentUserId) continue;
 
                 string template = $"|  {user.UserId} | {user.Username.PadRight(26)}|";

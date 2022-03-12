@@ -193,6 +193,7 @@ namespace TenmoClient
 
             console.PrintSendMoneyMenu(tenmoApiService.UserId, users);
 
+            //to prevent user from entering their own ID or one that does not exist
             bool isIdFound = false;
             while (!isIdFound)
             {
@@ -215,6 +216,7 @@ namespace TenmoClient
                 if (!isIdFound) Console.WriteLine("Please enter a valid ID.");
             }
 
+            //Asks for amount to send to selected user
             decimal amount = console.PromptForDecimal("Enter amount to send");
 
             if (tenmoApiService.SendMoney(toUserId, amount))
