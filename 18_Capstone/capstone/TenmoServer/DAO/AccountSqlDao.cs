@@ -17,7 +17,10 @@ namespace TenmoServer.DAO
         }
         private List<CompletedTransfer> completedTransfers = new List<CompletedTransfer>();
 
-        //Gets current user's account balance
+        /// <summary>
+        /// Gets current user's account balance
+        /// </summary>
+        /// <param name="userId">Current user's Id.</param>
         public decimal GetBalance(int userId)
         {
             decimal returnBalance = GetAccount(userId).Balance;
@@ -25,8 +28,11 @@ namespace TenmoServer.DAO
             return returnBalance;
         }
 
-        //Gets account info by userId
-        public Account GetAccount(int userId)
+        /// <summary>
+        /// Gets account info by userId
+        /// </summary>
+        /// <param name="userId"></param>
+        private Account GetAccount(int userId)
         {
             Account account = new Account();
             try
@@ -52,7 +58,13 @@ namespace TenmoServer.DAO
             return account;
         }
 
-        //Sends money to another user
+        /// <summary>
+        /// Sends money to another user
+        /// </summary>
+        /// <param name="fromUserId"></param>
+        /// <param name="toUserId"></param>
+        /// <param name="transferAmount"></param>
+        /// <returns>True if transfer successful</returns>
         public bool SendMoney(int fromUserId, int toUserId, decimal transferAmount)
         {
             Transfer transfer = new Transfer();
@@ -91,7 +103,11 @@ namespace TenmoServer.DAO
             return false;
         }
 
-        //Get Transfer details by transferId
+        /// <summary>
+        /// Get Transfer details by transferId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Transfer details</returns>
         public Transfer GetTransferById(int id)
         {
             Transfer transfer = new Transfer();
@@ -123,7 +139,11 @@ namespace TenmoServer.DAO
             return transfer;
         }
 
-        //Gets list of all the logged in users completed transfers
+        /// <summary>
+        /// Gets list of all the logged in users completed transfers
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Transfers from or to the current user</returns>
         public List<CompletedTransfer> GetTransfers(int userId)
         {
             Account userAcct = GetAccount(userId);
@@ -157,8 +177,11 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
-        
-        //Gets a CompletedTransfer from SqlDataReader for GetTransfers
+
+        /// <summary>
+        /// Gets a CompletedTransfer from SqlDataReader for GetTransfers
+        /// </summary>
+        /// <param name="reader"></param>
         private CompletedTransfer GetCompletedTransferFromReader(SqlDataReader reader)
         {
             CompletedTransfer transfer = new CompletedTransfer()
@@ -171,8 +194,12 @@ namespace TenmoServer.DAO
             return transfer;
         }
 
-        //Gets Details of Transfer from SqlDataReader for GetTransferById
-        public Transfer GetTransferDetailsFromReader(SqlDataReader reader)
+        /// <summary>
+        /// Gets Details of Transfer from SqlDataReader for GetTransferById
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        private Transfer GetTransferDetailsFromReader(SqlDataReader reader)
         {
             Transfer transfer = new Transfer()
             {
@@ -185,8 +212,12 @@ namespace TenmoServer.DAO
             };
             return transfer;
         }
-        
-        //Gets Account details from SqlDataReader for GetAccount
+
+        /// <summary>
+        /// Gets Account details from SqlDataReader for GetAccount
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         private Account GetAccountFromReader(SqlDataReader reader)
         {
             Account account = new Account()

@@ -175,7 +175,7 @@ namespace TenmoClient
             List<CompletedTransfer> transfers = tenmoApiService.GetTransfers();
 
             console.PrintGetTransfersMenu(tenmoApiService.Username, transfers);
-            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)");
+            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel), 0");
 
             if (menuOption == 0) return;
 
@@ -197,10 +197,11 @@ namespace TenmoClient
             bool isIdFound = false;
             while (!isIdFound)
             {
-                toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999);
+                toUserId = console.PromptForInteger("Please enter id of the user you are sending to[0]", 1001, 1999, 0);
                 if (toUserId == tenmoApiService.UserId)
                 {
-                    Console.WriteLine("Please enter a valid ID. You cannot send money to yourself.");
+                    
+                    console.PrintError("Please enter a valid ID. You cannot send money to yourself.");
                     continue;
                 }
 
@@ -213,7 +214,7 @@ namespace TenmoClient
                     }
                 }
 
-                if (!isIdFound) Console.WriteLine("Please enter a valid ID.");
+                if (!isIdFound) console.PrintError("Please enter a valid ID.");
             }
 
             //Asks for amount to send to selected user
@@ -221,11 +222,11 @@ namespace TenmoClient
 
             if (tenmoApiService.SendMoney(toUserId, amount))
             {
-                Console.WriteLine("Transfer was successful.\n");
+                console.PrintSuccess("Transfer was successful.\n");
             }
             else
             {
-                Console.WriteLine($"Transfer was not successful.\n");
+                console.PrintError($"Transfer was not successful.\n");
             }
             console.Pause();
         }
