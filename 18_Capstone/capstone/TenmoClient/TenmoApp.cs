@@ -174,7 +174,7 @@ namespace TenmoClient
         {
             List<CompletedTransfer> transfers = tenmoApiService.GetTransfers();
 
-            console.PrintGetTransfersMenu(transfers);
+            console.PrintGetTransfersMenu(tenmoApiService.Username, transfers);
             int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)");
 
             if (menuOption == 0) return;

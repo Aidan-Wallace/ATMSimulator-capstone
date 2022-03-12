@@ -70,7 +70,7 @@ namespace TenmoClient.Services
             Console.WriteLine("|-----------------------------------|");
         }
 
-        public void PrintGetTransfersMenu(List<CompletedTransfer> transfers)
+        public void PrintGetTransfersMenu(string currentUsername, List<CompletedTransfer> transfers)
         {
             Console.Clear();
             Console.WriteLine(" -------------------------------------------");
@@ -81,8 +81,14 @@ namespace TenmoClient.Services
             //Loop to display users goes here:
             foreach (CompletedTransfer transfer in transfers)
             {
-               
-                Console.WriteLine($" {transfer.TransferId}          {transfer.Type.PadRight(6)}{transfer.Username.PadRight(15)}{transfer.Amount.ToString("C2").PadLeft(6)}");
+                if (currentUsername == transfer.FromUsername)
+                {
+                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
+                }
+                else
+                {
+                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
+                }
             }
             Console.WriteLine("---------");
         }

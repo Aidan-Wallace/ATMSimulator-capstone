@@ -77,7 +77,7 @@ namespace TenmoServer.DAO
                         {
                             return true;
                         }
-                        
+
                     }
                 }
                 catch (SqlException)
@@ -121,23 +121,50 @@ namespace TenmoServer.DAO
 
         public List<CompletedTransfer> GetTransfers(int userId)
         {
+            Account userAcct = GetAccount(userId);
+            int acctId = userAcct.AcctId;
 
-            List<CompletedTransfer> transfersFrom = GetTransfersFrom(userId);
-            foreach (CompletedTransfer transfer in transfersFrom)
+            List<CompletedTransfer> transfers = new List<CompletedTransfer>();
+
+            string sql = $"SELECT transfer_id, ut.username to_username, uf.username from_username, amount FROM transfer t JOIN account af ON t.account_from = af.account_id JOIN account ato ON t.account_to = ato.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON ato.user_id = ut.user_id WHERE account_from = {acctId} OR account_to = {acctId} AND transfer_status_id = 2";
+
+            try
             {
-                completedTransfers.Add(transfer);
-            }
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
 
-            List<CompletedTransfer> transfersTo = GetTransfersTo(userId);
-            foreach (CompletedTransfer transfer in transfersTo)
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        CompletedTransfer transfer = GetCompletedTransferFromReader(reader);
+                        transfers.Add(transfer);
+                    }
+                }
+            }
+            catch (SqlException)
             {
-                completedTransfers.Add(transfer);
+                throw;
             }
-            OrganizeList();
-
-            return completedTransfers;
+            return transfers;
         }
 
+        private CompletedTransfer GetCompletedTransferFromReader(SqlDataReader reader)
+        {
+            CompletedTransfer transfer = new CompletedTransfer()
+            {
+                TransferId = Convert.ToInt32(reader["transfer_id"]),
+                ToUsername = Convert.ToString(reader["to_username"]),
+                FromUsername = Convert.ToString(reader["from_username"]),
+                Amount = Convert.ToDecimal(reader["amount"])
+            };
+            return transfer;
+        }
+
+        
         public Transfer GetTransferDetailsFromReader(SqlDataReader reader)
         {
             Transfer transfer = new Transfer()
@@ -150,94 +177,6 @@ namespace TenmoServer.DAO
                 TransferAmount = Convert.ToDecimal(reader["amount"])
             };
             return transfer;
-        }
-
-        public List<CompletedTransfer> GetTransfersFrom(int userId)
-        {
-            List<CompletedTransfer> transfers = new List<CompletedTransfer>();
-
-            Account acct = GetAccount(userId);
-            int acctId = acct.AcctId;
-            string sql = $"SELECT transfer_id, username, amount FROM transfer t JOIN account a ON t.account_from = a.account_id JOIN tenmo_user u ON u.user_id = a.user_id WHERE account_to = {acctId} AND transfer_status_id = 2";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand(sql, conn);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        CompletedTransfer transfer = GetTransfersReceivedFromReader(reader);
-                        transfers.Add(transfer);
-                    }
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-            return transfers;
-        }
-
-        public List<CompletedTransfer> GetTransfersTo(int userId)
-        {
-            List<CompletedTransfer> transfers = new List<CompletedTransfer>();
-
-            Account acct = GetAccount(userId);
-            int acctId = acct.AcctId;
-            string sql = $" SELECT transfer_id, username, amount FROM transfer t JOIN account a ON t.account_to = a.account_id JOIN tenmo_user u ON u.user_id = a.user_id WHERE account_from = {acctId} AND transfer_status_id = 2";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand(sql, conn);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        CompletedTransfer transfer = GetTransfersToFromReader(reader);
-                        transfers.Add(transfer);
-                    }
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-            return transfers;
-        }
-
-        private CompletedTransfer GetTransfersReceivedFromReader(SqlDataReader reader)
-        {
-            CompletedTransfer transfers = new CompletedTransfer()
-            {
-                TransferId = Convert.ToInt32(reader["transfer_id"]),
-                Type = "From: ",
-                Username = Convert.ToString(reader["username"]),
-                Amount = Convert.ToDecimal(reader["amount"])
-            };
-            return transfers;
-        }
-
-        private CompletedTransfer GetTransfersToFromReader(SqlDataReader reader)
-        {
-            CompletedTransfer transfers = new CompletedTransfer()
-            {
-                TransferId = Convert.ToInt32(reader["transfer_id"]),
-                Type = "To: ",
-                Username = Convert.ToString(reader["username"]),
-                Amount = Convert.ToDecimal(reader["amount"])
-            };
-            return transfers;
         }
         private Account GetAccountFromReader(SqlDataReader reader)
         {
