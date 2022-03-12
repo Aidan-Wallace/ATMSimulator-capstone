@@ -122,16 +122,16 @@ namespace TenmoClient
                 ApiUser user = tenmoApiService.Login(loginUser);
                 if (user == null)
                 {
-                    console.PrintError("Login failed.");
+                    console.PrintError(" Login failed.");
                 }
                 else
                 {
-                    console.PrintSuccess("You are now logged in");
+                    console.PrintSuccess(" You are now logged in");
                 }
             }
             catch (Exception)
             {
-                console.PrintError("Login failed.");
+                console.PrintError(" Login failed.");
             }
             console.Pause();
         }
@@ -148,16 +148,16 @@ namespace TenmoClient
                 bool isRegistered = tenmoApiService.Register(registerUser);
                 if (isRegistered)
                 {
-                    console.PrintSuccess("Registration was successful. Please log in.");
+                    console.PrintSuccess(" Registration was successful. Please log in.");
                 }
                 else
                 {
-                    console.PrintError("Registration was unsuccessful.");
+                    console.PrintError(" Registration was unsuccessful.");
                 }
             }
             catch (Exception)
             {
-                console.PrintError("Registration was unsuccessful.");
+                console.PrintError(" Registration was unsuccessful.");
             }
             console.Pause();
         }
@@ -166,7 +166,7 @@ namespace TenmoClient
         {
             decimal balance = tenmoApiService.GetBalance();
 
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($" Your current account balance is: {balance.ToString("C2")}\n");
             Console.ResetColor();
             console.Pause();

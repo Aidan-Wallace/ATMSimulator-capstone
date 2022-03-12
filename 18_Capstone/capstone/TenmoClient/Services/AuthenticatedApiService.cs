@@ -82,22 +82,22 @@ namespace TenmoClient.Services
             string message;
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                message = $"Error occurred - unable to reach server. Response status was '{response.ResponseStatus}'.";
+                message = $" Error occurred - unable to reach server. Response status was '{response.ResponseStatus}'.";
                 throw new HttpRequestException(message, response.ErrorException);
             }
             else if (!response.IsSuccessful)
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    message = $"Authorization is required and the user has not logged in.";
+                    message = $" Authorization is required and the user has not logged in.";
                 }
                 else if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    message = $"The user does not have permission.";
+                    message = $" The user does not have permission.";
                 }
                 else
                 {
-                    message = $"An http error occurred. Status code {(int)response.StatusCode} {response.StatusDescription}";
+                    message = $" An http error occurred. Status code {(int)response.StatusCode} {response.StatusDescription}";
                 }
                 throw new HttpRequestException(message, response.ErrorException);
             }

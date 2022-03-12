@@ -36,12 +36,12 @@ namespace TenmoClient.Services
         }
         public LoginUser PromptForLogin()
         {
-            string username = PromptForString(" User name");
+            string username = PromptForString("User name");
             if (String.IsNullOrWhiteSpace(username))
             {
                 return null;
             }
-            string password = PromptForHiddenString(" Password");
+            string password = PromptForHiddenString("Password");
 
             LoginUser loginUser = new LoginUser
             {
