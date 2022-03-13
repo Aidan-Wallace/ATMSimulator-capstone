@@ -34,11 +34,11 @@ namespace TenmoClient.Services
             }
         }
 
-        public List<CompletedTransfer> GetTransfers()
+        public List<AllTransfers> GetTransfers()
         {
             RestRequest request = new RestRequest($"{ApiUrl}/account/{UserId}/transfers");
 
-            IRestResponse<List<CompletedTransfer>> response = client.Get<List<CompletedTransfer>>(request);
+            IRestResponse<List<AllTransfers>> response = client.Get<List<AllTransfers>>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
@@ -54,7 +54,26 @@ namespace TenmoClient.Services
             }
         }
 
-        public Transfer GetTansferById(int transferId, int userId)
+        public List<PendingTransfer> GetPendingTransfers()
+        {
+            RestRequest request = new RestRequest($"{ApiUrl}/account/{UserId}/transfers/pending");
+
+            IRestResponse<List<PendingTransfer>> response = client.Get<List<PendingTransfer>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+        public Transfer GetTransferById(int transferId, int userId)
         {
             RestRequest request = new RestRequest($"{ApiUrl}/account/{userId}/transfer/{transferId}/");
 
@@ -74,7 +93,7 @@ namespace TenmoClient.Services
             }
         }
 
-        public bool HandleMoneyTransfers(int transferTypeId, int toUserId, decimal amount)
+        public bool SendMoney(int toUserId, decimal amount)
         {
             TransferMoney transfer = new TransferMoney()
             {
@@ -83,7 +102,35 @@ namespace TenmoClient.Services
                 TransferAmount = amount,
             };
 
-            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/{transferTypeId}");
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer");
+            request.AddJsonBody(transfer);
+
+            IRestResponse<bool> response = client.Post<bool>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        public bool RequestMoney(int fromUserId, decimal amount)
+        {
+            TransferMoney transfer = new TransferMoney()
+            {
+                FromUserId = fromUserId,
+                ToUserId = UserId,
+                TransferAmount = amount,
+            };
+
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/request");
             request.AddJsonBody(transfer);
 
             IRestResponse<bool> response = client.Post<bool>(request);

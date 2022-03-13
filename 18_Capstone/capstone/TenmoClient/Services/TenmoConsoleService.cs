@@ -52,7 +52,7 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
-        public void PrintSendMoneyMenu(int currentUserId, List<User> users)
+        public void PrintMoneyMenu(int currentUserId, List<User> users)
         {
             Console.Clear();
             Console.WriteLine(" |-------------- Users --------------|");
@@ -71,30 +71,44 @@ namespace TenmoClient.Services
             Console.WriteLine(" |-----------------------------------|");
         }
 
-        public void PrintGetTransfersMenu(string currentUsername, List<CompletedTransfer> transfers)
+        public void PrintGetTransfersMenu(string currentUsername, List<AllTransfers> transfers)
         {
             Console.Clear();
-            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" ------------------------------------------------------------");
             Console.WriteLine(" Transfers");
-            Console.WriteLine(" ID             From/To              Amount ");
-            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" ID             From/To              Amount       Status     ");
+            Console.WriteLine(" ------------------------------------------------------------");
 
             //Loop to display users goes here:
-            foreach (CompletedTransfer transfer in transfers)
+            foreach (AllTransfers transfer in transfers)
             {
                 //Distinguishes money sent BY the user and money sent TO the user
                 if (currentUsername == transfer.FromUsername)
                 {
-                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
+                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(10)}       {transfer.TransferStatus}");
                 }
                 else
                 {
-                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
+                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(10)}       {transfer.TransferStatus}");
                 }
             }
             Console.WriteLine(" ---------");
         }
 
+        public void PrintPendingTransfersMenu(List<PendingTransfer> transfers)
+        {
+            Console.Clear();
+            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" Pending Transfer Requests");
+            Console.WriteLine(" ID          To                      Amount ");
+            Console.WriteLine(" -------------------------------------------");
+
+            foreach (PendingTransfer transfer in transfers)
+            {
+                    Console.WriteLine($" {transfer.TransferId}          {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2")}");
+            }
+            Console.WriteLine(" ---------");
+        }
         internal void PrintTransferDetails(Transfer transfer)
         {
             Console.Clear();

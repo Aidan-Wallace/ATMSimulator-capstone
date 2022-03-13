@@ -22,10 +22,18 @@ namespace TenmoClient.Models
         public decimal TransferAmount { get; set; }
     }
 
-    public class CompletedTransfer
+    public class AllTransfers
     {
         public int TransferId { get; set; }
         public string FromUsername { get; set; }
+        public string ToUsername { get; set; }
+        public decimal Amount { get; set; }
+        public string TransferStatus { get; set; }
+    }
+
+    public class PendingTransfer
+    {
+        public int TransferId { get; set; }
         public string ToUsername { get; set; }
         public decimal Amount { get; set; }
     }

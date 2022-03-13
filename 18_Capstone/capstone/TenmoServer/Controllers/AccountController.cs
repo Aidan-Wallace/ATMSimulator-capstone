@@ -28,9 +28,15 @@ namespace TenmoServer.Controllers
         }
 
         [HttpGet("{userId}/transfers")]
-        public ActionResult<List<CompletedTransfer>> GetTransfers(int userId)
+        public ActionResult<List<AllTransfers>> GetTransfers(int userId)
         {
             return accountDao.GetTransfers(userId);
+        }
+
+        [HttpGet("{userId}/transfers/pending")]
+        public ActionResult<List<PendingTransfer>> GetPendingTransfers(int userId)
+        {
+            return accountDao.GetPendingTransfers(userId);
         }
 
         [HttpGet("{userId}/transfer/{transferId}")]
@@ -38,11 +44,18 @@ namespace TenmoServer.Controllers
         {
             return accountDao.GetTransferById(transferId, userId);
         }
+        
 
-        [HttpPost("{transfer}/{transferTypeId}")]
-        public ActionResult<bool> HandleMoneyTransfers(TransferMoney transfer, int transferTypeId)
+        [HttpPost("transfer")]
+        public ActionResult<bool> SendMoney(TransferMoney transfer)
         {
-            return Ok(accountDao.HandleMoneyTransfers(transferTypeId, transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
+            return Ok(accountDao.SendMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
+        }
+
+        [HttpPost("transfer/request")]
+        public ActionResult<bool> RequesetMoney(TransferMoney transfer)
+        {
+            return Ok(accountDao.RequestMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TenmoServer.DAO
         {
             connectionString = dbConnectionString;
         }
-        private List<CompletedTransfer> completedTransfers = new List<CompletedTransfer>();
+        private List<AllTransfers> completedTransfers = new List<AllTransfers>();
 
         /// <summary>
         /// Gets current user's account balance
@@ -65,18 +65,12 @@ namespace TenmoServer.DAO
         /// <param name="toUserId"></param>
         /// <param name="transferAmount"></param>
         /// <returns>True if transfer successful</returns>
-        public bool HandleMoneyTransfers(int transferTypeId, int fromUserId, int toUserId, decimal transferAmount)
+        public bool SendMoney(int fromUserId, int toUserId, decimal transferAmount)
         {
             Account fromAcct = GetAccount(fromUserId);
             Account toAcct = GetAccount(toUserId);
             int fromAcctId = fromAcct.AcctId;
             int toAcctId = toAcct.AcctId;
-
-            int transferStatusId = 1;
-            if (transferTypeId == 2)
-            {
-                transferStatusId = 2;
-            }
 
             if (transferAmount <= fromAcct.Balance)
             {
@@ -86,8 +80,8 @@ namespace TenmoServer.DAO
                     {
                         conn.Open();
 
-                        SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(@TransferTypeId, {transferStatusId}, @fromAcctId, @toAcctId, @amount); UPDATE account SET balance -= @amount WHERE account_id = @fromAcctId; UPDATE account SET balance += @amount WHERE account_id = @toAcctId", conn);
-                        cmd.Parameters.AddWithValue("@TransferTypeId", transferTypeId);
+                        SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(2, 2, @fromAcctId, @toAcctId, @amount); UPDATE account SET balance -= @amount WHERE account_id = @fromAcctId; UPDATE account SET balance += @amount WHERE account_id = @toAcctId", conn);
+
                         cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
                         cmd.Parameters.AddWithValue("@toAcctId", toAcctId);
                         cmd.Parameters.AddWithValue("@amount", transferAmount);
@@ -102,6 +96,45 @@ namespace TenmoServer.DAO
                     throw;
                 }
             }
+            return false;
+        }
+
+        
+        /// <summary>
+        /// Requests money from another user
+        /// </summary>
+        /// <param name="fromUserId"></param>
+        /// <param name="toUserId"></param>
+        /// <param name="transferAmount"></param>
+        /// <returns>Returns true if successful</returns>
+        public bool RequestMoney(int fromUserId, int toUserId, decimal transferAmount)
+        {
+            Account fromAcct = GetAccount(fromUserId);
+            Account toAcct = GetAccount(toUserId);
+            int fromAcctId = fromAcct.AcctId;
+            int toAcctId = toAcct.AcctId;
+
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(1, 1, @fromAcctId, @toAcctId, @amount)", conn);
+
+                        cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
+                        cmd.Parameters.AddWithValue("@toAcctId", toAcctId);
+                        cmd.Parameters.AddWithValue("@amount", transferAmount);
+
+                        int rows = cmd.ExecuteNonQuery();
+
+                        if (rows > 0) return true;
+                    }
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
             return false;
         }
 
@@ -148,14 +181,14 @@ namespace TenmoServer.DAO
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>Transfers from or to the current user</returns>
-        public List<CompletedTransfer> GetTransfers(int userId)
+        public List<AllTransfers> GetTransfers(int userId)
         {
             Account userAcct = GetAccount(userId);
             int acctId = userAcct.AcctId;
 
-            List<CompletedTransfer> transfers = new List<CompletedTransfer>();
+            List<AllTransfers> transfers = new List<AllTransfers>();
 
-            string sql = $"SELECT transfer_id, ut.username to_username, uf.username from_username, amount FROM transfer t JOIN account af ON t.account_from = af.account_id JOIN account ato ON t.account_to = ato.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON ato.user_id = ut.user_id WHERE account_from = {acctId} OR account_to = {acctId} AND transfer_status_id = 2";
+            string sql = $"SELECT transfer_id, ut.username to_username, uf.username from_username, amount, transfer_status_desc FROM transfer t JOIN account af ON t.account_from = af.account_id JOIN account ato ON t.account_to = ato.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON ato.user_id = ut.user_id JOIN transfer_status ts on t.transfer_status_id = ts.transfer_status_id WHERE (account_from = {acctId} OR account_to = {acctId})";
 
             try
             {
@@ -169,7 +202,7 @@ namespace TenmoServer.DAO
 
                     while (reader.Read())
                     {
-                        CompletedTransfer transfer = GetCompletedTransferFromReader(reader);
+                        AllTransfers transfer = GetCompletedTransferFromReader(reader);
                         transfers.Add(transfer);
                     }
                 }
@@ -181,19 +214,100 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
+        public List<PendingTransfer> GetPendingTransfers(int userId)
+        {
+            Account userAcct = GetAccount(userId);
+            int acctId = userAcct.AcctId;
 
+            List<PendingTransfer> transfers = new List<PendingTransfer>();
+
+            string sql = $"SELECT transfer_id, ut.username to_username, amount FROM transfer t JOIN account af ON t.account_from = af.account_id JOIN account ato ON t.account_to = ato.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON ato.user_id = ut.user_id WHERE account_from = {acctId} AND transfer_status_id = 1;";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        PendingTransfer transfer = GetPendingTransferFromReader(reader);
+                        transfers.Add(transfer);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transfers;
+        }
+
+        /// <summary>
+        /// Gets user's pending transfer requests
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<PendingTransfer> GetTransferRequests(int userId)
+        {
+            Account userAcct = GetAccount(userId);
+            int acctId = userAcct.AcctId;
+
+            List<PendingTransfer> transfers = new List<PendingTransfer>();
+
+            string sql = $"SELECT transfer_id, ut.username to_username, amount FROM transfer t JOIN account af ON t.account_from = af.account_id JOIN account ato ON t.account_to = ato.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON ato.user_id = ut.user_id WHERE account_from = {acctId} AND transfer_status_id = 1";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        PendingTransfer transfer = GetPendingTransferFromReader(reader);
+                        transfers.Add(transfer);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transfers;
+        }
         /// <summary>
         /// Gets a CompletedTransfer from SqlDataReader for GetTransfers
         /// </summary>
         /// <param name="reader"></param>
-        private CompletedTransfer GetCompletedTransferFromReader(SqlDataReader reader)
+        private AllTransfers GetCompletedTransferFromReader(SqlDataReader reader)
         {
-            CompletedTransfer transfer = new CompletedTransfer()
+            AllTransfers transfer = new AllTransfers()
             {
                 TransferId = Convert.ToInt32(reader["transfer_id"]),
                 ToUsername = Convert.ToString(reader["to_username"]),
                 FromUsername = Convert.ToString(reader["from_username"]),
-                Amount = Convert.ToDecimal(reader["amount"])
+                Amount = Convert.ToDecimal(reader["amount"]),
+                TransferStatus = Convert.ToString(reader["transfer_status_desc"])
+            };
+            return transfer;
+        }
+
+        private PendingTransfer GetPendingTransferFromReader(SqlDataReader reader)
+        {
+            PendingTransfer transfer = new PendingTransfer()
+            {
+                TransferId = Convert.ToInt32(reader["transfer_id"]),
+                ToUsername = Convert.ToString(reader["to_username"]),
+                Amount = Convert.ToDecimal(reader["amount"]),
             };
             return transfer;
         }

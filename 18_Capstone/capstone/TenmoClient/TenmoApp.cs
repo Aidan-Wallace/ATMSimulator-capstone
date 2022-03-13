@@ -86,18 +86,20 @@ namespace TenmoClient
             if (menuSelection == 3)
             {
                 // View your pending requests
+                ViewPendingTransfers();
             }
 
             if (menuSelection == 4)
             {
                 // Send TE bucks
-                HandleMoneyTransfers(2);
+               
+                SendMoney(); 
             }
 
             if (menuSelection == 5)
             {
                 // Request TE bucks
-                HandleMoneyTransfers(1);
+                RequestMoney();
             }
 
             if (menuSelection == 6)
@@ -167,7 +169,7 @@ namespace TenmoClient
         {
             decimal balance = tenmoApiService.GetBalance();
 
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($" Your current account balance is: {balance.ToString("C2")}\n");
             Console.ResetColor();
             console.Pause();
@@ -175,14 +177,14 @@ namespace TenmoClient
 
         public void ViewTransfers()
         {
-            List<CompletedTransfer> transfers = tenmoApiService.GetTransfers();
+            List<AllTransfers> transfers = tenmoApiService.GetTransfers();
 
             console.PrintGetTransfersMenu(tenmoApiService.Username, transfers);
-            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)", 3001, 3099, 0);
+            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (Enter to cancel)", 3001, 3099, 0);
 
             if (menuOption == 0) return;
 
-            Transfer transfer = tenmoApiService.GetTansferById(menuOption, tenmoApiService.UserId);
+            Transfer transfer = tenmoApiService.GetTransferById(menuOption, tenmoApiService.UserId);
 
             if (transfer.TransferId == 0)
             {
@@ -195,46 +197,44 @@ namespace TenmoClient
             console.Pause();
         }
 
-        // public void HandleMoney (int methodName)
-        // {
-        //      
-        // }
+        public void ViewPendingTransfers()
+        {
+            List<PendingTransfer> transfers = tenmoApiService.GetPendingTransfers();
 
-        public void HandleMoneyTransfers(int transferTypeId)
+            console.PrintPendingTransfersMenu(transfers);
+            int menuOption = console.PromptForInteger("Please enter transfer ID to approve/reject(0 to cancel)", 0);
+
+            if (menuOption == 0) return;
+
+            Transfer transfer = tenmoApiService.GetTransferById(menuOption, tenmoApiService.UserId);
+
+            if (transfer.TransferId == 0)
+            {
+                console.PrintError(" There was an error retrieving the information.");
+            }
+            else
+            {
+                console.PrintTransferDetails(transfer);
+            }
+            console.Pause();
+        }
+
+        public void SendMoney()
         {
             List<User> users = tenmoApiService.GetUsers();
             int toUserId = 0;
-            string transferType;
-            string transferTypeErr;
-            string transferTypeAmount;
 
-            switch (transferTypeId)
-            {
-                case 1:
-                    transferType = "Please enter ID of the user you are requesting from";
-                    transferTypeErr = "Please enter a valid ID. You cannot request money from yourself.";
-                    transferTypeAmount = "Enter amount to request";
-                    break;
-                case 2:
-                    transferType = $"Please enter the ID of the user you are sending to";
-                    transferTypeErr = "Please enter a valid ID. You cannot send money to yourself.";
-                    transferTypeAmount = "Enter amount to send";
-                    break;
-                default:
-                    return;
-            }
-
-            console.PrintSendMoneyMenu(tenmoApiService.UserId, users);
+            console.PrintMoneyMenu(tenmoApiService.UserId, users);
 
             //to prevent user from entering their own ID or one that does not exist
             bool isIdFound = false;
             while (!isIdFound)
             {
-                toUserId = console.PromptForInteger(transferType, 1001, 1999, 0);
+                toUserId = console.PromptForInteger(" Please enter the ID of the user you are sending to", 1001, 1999, 0);
                 if (toUserId == tenmoApiService.UserId)
                 {
 
-                    console.PrintError(transferTypeErr);
+                    console.PrintError(" Please enter a valid ID. You cannot send money to yourself.");
                     continue;
                 }
 
@@ -251,15 +251,60 @@ namespace TenmoClient
             }
 
             //Asks for amount to send to selected user
-            decimal amount = console.PromptForDecimal(transferTypeAmount);
+            decimal amount = console.PromptForDecimal(" Enter amount to send");
 
-            if (tenmoApiService.HandleMoneyTransfers(transferTypeId, toUserId, amount))
+            if (tenmoApiService.SendMoney(toUserId, amount))
             {
-                console.PrintSuccess("Transfer was successful.\n");
+                console.PrintSuccess(" Transfer was successful.\n");
             }
             else
             {
-                console.PrintError($"Transfer was not successful.\n");
+                console.PrintError(" Unable to complete transfer.");
+            }
+            console.Pause();
+        }
+
+        public void RequestMoney()
+        {
+            List<User> users = tenmoApiService.GetUsers();
+            int fromUserId = 0;
+
+            console.PrintMoneyMenu(tenmoApiService.UserId, users);
+
+            //to prevent user from entering their own ID or one that does not exist
+            bool isIdFound = false;
+            while (!isIdFound)
+            {
+                fromUserId = console.PromptForInteger(" Please enter the ID of the user you are requesting from", 1001, 1999, 0);
+                if (fromUserId == tenmoApiService.UserId)
+                {
+
+                    console.PrintError(" Please enter a valid ID. You cannot request money from yourself.");
+                    continue;
+                }
+
+                foreach (User user in users)
+                {
+                    if (user.UserId == fromUserId)
+                    {
+                        isIdFound = true;
+                        continue;
+                    }
+                }
+
+                if (!isIdFound) console.PrintError("Please enter a valid ID.");
+            }
+
+            //Asks for amount to send to selected user
+            decimal amount = console.PromptForDecimal(" Enter amount you are requesting");
+
+            if (tenmoApiService.RequestMoney(fromUserId, amount))
+            {
+                console.PrintSuccess(" Transfer request was successful, pending approval.\n");
+            }
+            else
+            {
+                console.PrintError(" Unable to complete request.");
             }
             console.Pause();
         }
