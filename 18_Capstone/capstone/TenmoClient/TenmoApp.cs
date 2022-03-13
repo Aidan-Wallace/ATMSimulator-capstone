@@ -91,12 +91,13 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-                SendMoney();
+                HandleMoneyTransfers(2);
             }
 
             if (menuSelection == 5)
             {
                 // Request TE bucks
+                HandleMoneyTransfers(1);
             }
 
             if (menuSelection == 6)
@@ -185,7 +186,7 @@ namespace TenmoClient
 
             if (transfer.TransferId == 0)
             {
-                console.PrintError(" There was an error retreiving the information.");
+                console.PrintError(" There was an error retrieving the information.");
             }
             else
             {
@@ -194,11 +195,34 @@ namespace TenmoClient
             console.Pause();
         }
 
+        // public void HandleMoney (int methodName)
+        // {
+        //      
+        // }
 
-        public void SendMoney()
+        public void HandleMoneyTransfers(int transferTypeId)
         {
             List<User> users = tenmoApiService.GetUsers();
             int toUserId = 0;
+            string transferType;
+            string transferTypeErr;
+            string transferTypeAmount;
+
+            switch (transferTypeId)
+            {
+                case 1:
+                    transferType = "Please enter ID of the user you are requesting from";
+                    transferTypeErr = "Please enter a valid ID. You cannot request money from yourself.";
+                    transferTypeAmount = "Enter amount to request";
+                    break;
+                case 2:
+                    transferType = $"Please enter the ID of the user you are sending to";
+                    transferTypeErr = "Please enter a valid ID. You cannot send money to yourself.";
+                    transferTypeAmount = "Enter amount to send";
+                    break;
+                default:
+                    return;
+            }
 
             console.PrintSendMoneyMenu(tenmoApiService.UserId, users);
 
@@ -206,11 +230,11 @@ namespace TenmoClient
             bool isIdFound = false;
             while (!isIdFound)
             {
-                toUserId = console.PromptForInteger("Please enter id of the user you are sending to", 1001, 1999, 0);
+                toUserId = console.PromptForInteger(transferType, 1001, 1999, 0);
                 if (toUserId == tenmoApiService.UserId)
                 {
-                    
-                    console.PrintError("Please enter a valid ID. You cannot send money to yourself.");
+
+                    console.PrintError(transferTypeErr);
                     continue;
                 }
 
@@ -227,9 +251,9 @@ namespace TenmoClient
             }
 
             //Asks for amount to send to selected user
-            decimal amount = console.PromptForDecimal("Enter amount to send");
+            decimal amount = console.PromptForDecimal(transferTypeAmount);
 
-            if (tenmoApiService.SendMoney(toUserId, amount))
+            if (tenmoApiService.HandleMoneyTransfers(transferTypeId, toUserId, amount))
             {
                 console.PrintSuccess("Transfer was successful.\n");
             }

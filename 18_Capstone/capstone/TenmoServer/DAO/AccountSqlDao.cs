@@ -65,14 +65,19 @@ namespace TenmoServer.DAO
         /// <param name="toUserId"></param>
         /// <param name="transferAmount"></param>
         /// <returns>True if transfer successful</returns>
-        public bool SendMoney(int fromUserId, int toUserId, decimal transferAmount)
+        public bool HandleMoneyTransfers(int transferTypeId, int fromUserId, int toUserId, decimal transferAmount)
         {
-            Transfer transfer = new Transfer();
-
             Account fromAcct = GetAccount(fromUserId);
             Account toAcct = GetAccount(toUserId);
             int fromAcctId = fromAcct.AcctId;
             int toAcctId = toAcct.AcctId;
+
+            int transferStatusId = 1;
+            if (transferTypeId == 2)
+            {
+                transferStatusId = 2;
+            }
+
             if (transferAmount <= fromAcct.Balance)
             {
                 try
@@ -81,18 +86,15 @@ namespace TenmoServer.DAO
                     {
                         conn.Open();
 
-                        SqlCommand cmd = new SqlCommand("INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(2, 2, @fromAcctId, @toAcctId, @amount); UPDATE account SET balance -= @amount WHERE account_id = @fromAcctId; UPDATE account SET balance += @amount WHERE account_id = @toAcctId", conn);
+                        SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(@TransferTypeId, {transferStatusId}, @fromAcctId, @toAcctId, @amount); UPDATE account SET balance -= @amount WHERE account_id = @fromAcctId; UPDATE account SET balance += @amount WHERE account_id = @toAcctId", conn);
+                        cmd.Parameters.AddWithValue("@TransferTypeId", transferTypeId);
                         cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
                         cmd.Parameters.AddWithValue("@toAcctId", toAcctId);
                         cmd.Parameters.AddWithValue("@amount", transferAmount);
 
                         int rows = cmd.ExecuteNonQuery();
 
-                        if (rows > 0)
-                        {
-                            return true;
-                        }
-
+                        if (rows > 0) return true;
                     }
                 }
                 catch (SqlException)

@@ -39,10 +39,10 @@ namespace TenmoServer.Controllers
             return accountDao.GetTransferById(transferId, userId);
         }
 
-        [HttpPost("{transfer}")]
-        public ActionResult<bool> SendMoney(TransferMoney transfer)
+        [HttpPost("{transfer}/{transferTypeId}")]
+        public ActionResult<bool> HandleMoneyTransfers(TransferMoney transfer, int transferTypeId)
         {
-            return Ok(accountDao.SendMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
+            return Ok(accountDao.HandleMoneyTransfers(transferTypeId, transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
         }
     }
 }

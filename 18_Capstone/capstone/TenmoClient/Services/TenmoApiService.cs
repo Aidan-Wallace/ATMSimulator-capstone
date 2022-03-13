@@ -74,7 +74,7 @@ namespace TenmoClient.Services
             }
         }
 
-        public bool SendMoney(int toUserId, decimal amount)
+        public bool HandleMoneyTransfers(int transferTypeId, int toUserId, decimal amount)
         {
             TransferMoney transfer = new TransferMoney()
             {
@@ -83,7 +83,7 @@ namespace TenmoClient.Services
                 TransferAmount = amount,
             };
 
-            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer");
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/{transferTypeId}");
             request.AddJsonBody(transfer);
 
             IRestResponse<bool> response = client.Post<bool>(request);
