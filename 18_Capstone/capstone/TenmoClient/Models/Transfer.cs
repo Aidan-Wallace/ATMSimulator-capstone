@@ -38,9 +38,8 @@ namespace TenmoClient.Models
         public decimal Amount { get; set; }
     }
 
-    public class UpdatePendingApproval
+    public class TransferIdModel
     {
         public int TransferId { get; set; }
-        public int RequestedTransferType { get; set; }
     }
 }

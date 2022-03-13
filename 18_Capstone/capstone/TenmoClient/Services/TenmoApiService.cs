@@ -169,28 +169,56 @@ namespace TenmoClient.Services
             }
         }
 
-        internal void HandlePendingRequests(int transferId, int menuOption)
+        internal bool ApproveRequest(int transferId)
         {
-            // New UpdateRequestApproval
-            UpdatePendingApproval newApproval = new UpdatePendingApproval()
+            TransferIdModel newApproval = new TransferIdModel()
             {
                 TransferId = transferId,
             };
 
-            if (menuOption == 1)
-            {
+                RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/request/apporove");
+                request.AddJsonBody(newApproval);
 
+                IRestResponse<bool> response = client.Put<bool>(request);
+
+                if (response.ResponseStatus != ResponseStatus.Completed)
+                {
+                    throw new Exception("Error occurred - Unable to reach server.");
+                }
+                else if (!response.IsSuccessful)
+                {
+                    throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
+                }
+                else
+                {
+                    return response.Data;
+                }
+        }
+
+        internal bool RejectRequest(int transferId)
+        {
+            TransferIdModel reject = new TransferIdModel()
+            {
+                TransferId = transferId,
+            };
+
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/request/reject");
+            request.AddJsonBody(reject);
+
+            IRestResponse<bool> response = client.Put<bool>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - Unable to reach server.");
             }
-            else if (menuOption == 2)
+            else if (!response.IsSuccessful)
             {
-
+                throw new Exception("Error occurred - Received not success response: " + (int)response.StatusCode);
             }
             else
             {
-                // return
+                return response.Data;
             }
-
-            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/{transferId}");
         }
     }
 }

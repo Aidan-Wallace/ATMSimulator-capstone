@@ -58,9 +58,16 @@ namespace TenmoServer.Controllers
             return Ok(accountDao.RequestMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
         }
 
-        [HttpPut("transfer/request/{transferId}")]
-        public void UpdateTransactionApproval(int transferId, UpdatePendingApproval updatedTransfer)
+        [HttpPut("transfer/request/apporove")]
+        public ActionResult<bool> ApproveTransferRequest(UpdatePendingApproval updatedRequest)
         {
+            return Ok(accountDao.ApproveTransferRequest(updatedRequest.TransferId));
+        }
+
+        [HttpPut("transfer/request/reject")]
+        public ActionResult<bool> RejectTransferRequest(UpdatePendingApproval updatedRequest)
+        {
+            return Ok(accountDao.RejectTransferRequest(updatedRequest.TransferId));
         }
     }
 }

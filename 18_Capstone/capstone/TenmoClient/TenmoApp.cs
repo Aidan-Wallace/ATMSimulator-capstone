@@ -205,8 +205,8 @@ namespace TenmoClient
             int menuOption = console.PromptForInteger("Please enter transfer ID to approve/reject(0 to cancel)", 0);
 
             if (menuOption == 0) return;
-            
 
+            HandlePendingTransfers(menuOption);
 
             /*
             Transfer transfer = tenmoApiService.GetTransferById(menuOption, tenmoApiService.UserId);
@@ -226,9 +226,35 @@ namespace TenmoClient
         public void HandlePendingTransfers(int transferId)
         {
             console.PrintApproveRejectMenu(transferId);
+            
             int menuOption = console.PromptForInteger("Please choose an option", 0, 2, 0);
+            if (menuOption == 0) return; 
 
-            tenmoApiService.HandlePendingRequests(transferId, menuOption);
+            if (menuOption == 1)
+            {
+                if (tenmoApiService.ApproveRequest(transferId))
+                {
+                    console.PrintSuccess(" Transfer was completed.");
+                 
+                }
+                else
+                {
+                    console.PrintError(" An error occured.");
+                }
+
+            }
+            else
+            {
+                if (tenmoApiService.RejectRequest(transferId))
+                {
+                    console.PrintSuccess(" Transfer was rejected.");
+                }
+                else
+                {
+                    console.PrintError(" An error occurred.");
+                }
+            }
+            console.Pause();
         }
 
         public void SendMoney()

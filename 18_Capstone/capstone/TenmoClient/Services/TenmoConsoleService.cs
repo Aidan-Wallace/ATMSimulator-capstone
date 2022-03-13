@@ -85,11 +85,11 @@ namespace TenmoClient.Services
                 //Distinguishes money sent BY the user and money sent TO the user
                 if (currentUsername == transfer.FromUsername)
                 {
-                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(5)}       {transfer.TransferStatus}");
+                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(7)}       {transfer.TransferStatus}");
                 }
                 else
                 {
-                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(5)}       {transfer.TransferStatus}");
+                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(7)}       {transfer.TransferStatus}");
                 }
             }
             Console.WriteLine(" ---------");
@@ -125,7 +125,7 @@ namespace TenmoClient.Services
 
         public void PrintApproveRejectMenu(int transferId)
         {
-            Console.WriteLine(transferId);
+            Console.WriteLine("");
             Console.WriteLine(" 1: Approve");
             Console.WriteLine(" 2: Reject");
             Console.WriteLine(" 0: Don't approve or reject");

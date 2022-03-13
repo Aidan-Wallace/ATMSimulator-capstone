@@ -99,7 +99,7 @@ namespace TenmoServer.DAO
             return false;
         }
 
-        
+
         /// <summary>
         /// Requests money from another user
         /// </summary>
@@ -114,28 +114,107 @@ namespace TenmoServer.DAO
             int fromAcctId = fromAcct.AcctId;
             int toAcctId = toAcct.AcctId;
 
-                try
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-                        conn.Open();
+                    conn.Open();
 
-                        SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(1, 1, @fromAcctId, @toAcctId, @amount)", conn);
+                    SqlCommand cmd = new SqlCommand($"INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(1, 1, @fromAcctId, @toAcctId, @amount)", conn);
 
-                        cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
-                        cmd.Parameters.AddWithValue("@toAcctId", toAcctId);
-                        cmd.Parameters.AddWithValue("@amount", transferAmount);
+                    cmd.Parameters.AddWithValue("@fromAcctId", fromAcctId);
+                    cmd.Parameters.AddWithValue("@toAcctId", toAcctId);
+                    cmd.Parameters.AddWithValue("@amount", transferAmount);
 
-                        int rows = cmd.ExecuteNonQuery();
+                    int rows = cmd.ExecuteNonQuery();
 
-                        if (rows > 0) return true;
-                    }
+                    if (rows > 0) return true;
                 }
-                catch (SqlException)
-                {
-                    throw;
-                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
             return false;
+        }
+
+        public bool ApproveTransferRequest(int transferId)
+        {
+            ApprovedTransfer transfer = GetTransfer(transferId);
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand($"UPDATE transfer SET transfer_status_id = 2 WHERE transfer_id = {transferId}; UPDATE account SET balance -= {transfer.Amount} WHERE account_id = {transfer.AccountFrom}; UPDATE account SET balance += {transfer.Amount} WHERE account_id = {transfer.AccountTo}", conn);
+                    int rows = cmd.ExecuteNonQuery();
+
+                    if (rows > 0) return true;
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return false;
+        }
+
+        public bool RejectTransferRequest(int transferId)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand($"UPDATE transfer SET transfer_status_id = 3 WHERE transfer_id = {transferId};", conn);
+
+                    int rows = cmd.ExecuteNonQuery();
+
+                    if (rows > 0) return true;
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return false;
+        }
+
+        private ApprovedTransfer GetTransfer(int transferId)
+        {
+
+            ApprovedTransfer transfer = new ApprovedTransfer();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand($"SELECT account_from, account_to, amount FROM transfer WHERE transfer_id = {transferId}", conn);
+                    cmd.Parameters.AddWithValue("@transfer_id", transferId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        transfer.AccountFrom = Convert.ToInt32(reader["account_from"]);
+                        transfer.AccountTo = Convert.ToInt32(reader["account_to"]);
+                        transfer.Amount = Convert.ToDecimal(reader["amount"]);
+                    }
+
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return transfer;
         }
 
         /// <summary>
