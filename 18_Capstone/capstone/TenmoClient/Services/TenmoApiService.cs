@@ -54,9 +54,9 @@ namespace TenmoClient.Services
             }
         }
 
-        public Transfer GetTansferById(int transferId)
+        public Transfer GetTansferById(int transferId, int userId)
         {
-            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/{transferId}/");
+            RestRequest request = new RestRequest($"{ApiUrl}/account/{userId}/transfer/{transferId}/");
 
             IRestResponse<Transfer> response = client.Get<Transfer>(request);
 

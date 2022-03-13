@@ -108,11 +108,13 @@ namespace TenmoServer.DAO
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Transfer details</returns>
-        public Transfer GetTransferById(int id)
+        public Transfer GetTransferById(int transferId, int userId)
         {
             Transfer transfer = new Transfer();
+            Account account = GetAccount(userId);
+            int acctId = account.AcctId;
 
-            string sql = "SELECT transfer_id, uf.username from_username, ut.username to_username, transfer_type_desc, transfer_status_desc, amount FROM transfer t JOIN transfer_type tt on t.transfer_type_id = tt.transfer_type_id JOIN transfer_status ts on t.transfer_status_id = ts.transfer_status_id JOIN account af on account_from = af.account_id JOIN account a on account_to = a.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON a.user_id = ut.user_id WHERE t.transfer_id = @transfer_id;";
+            string sql = $"SELECT transfer_id, uf.username from_username, ut.username to_username, transfer_type_desc, transfer_status_desc, amount FROM transfer t JOIN transfer_type tt on t.transfer_type_id = tt.transfer_type_id JOIN transfer_status ts on t.transfer_status_id = ts.transfer_status_id JOIN account af on account_from = af.account_id JOIN account a on account_to = a.account_id JOIN tenmo_user uf ON af.user_id = uf.user_id JOIN tenmo_user ut ON a.user_id = ut.user_id WHERE t.transfer_id = @transfer_id AND (account_from = {acctId} OR account_to = {acctId});";
 
             try
             {
@@ -121,7 +123,7 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@transfer_id", id);
+                    cmd.Parameters.AddWithValue("@transfer_id", transferId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 

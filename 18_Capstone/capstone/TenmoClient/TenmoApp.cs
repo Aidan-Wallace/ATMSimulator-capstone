@@ -177,13 +177,20 @@ namespace TenmoClient
             List<CompletedTransfer> transfers = tenmoApiService.GetTransfers();
 
             console.PrintGetTransfersMenu(tenmoApiService.Username, transfers);
-            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel), 0");
+            int menuOption = console.PromptForInteger("Please enter transfer ID to view details (0 to cancel)", 3001, 3099, 0);
 
             if (menuOption == 0) return;
 
-            Transfer transfer = tenmoApiService.GetTansferById(menuOption);
+            Transfer transfer = tenmoApiService.GetTansferById(menuOption, tenmoApiService.UserId);
 
-            console.PrintTransferDetails(transfer);
+            if (transfer.TransferId == 0)
+            {
+                console.PrintError(" There was an error retreiving the information.");
+            }
+            else
+            {
+                console.PrintTransferDetails(transfer);
+            }
             console.Pause();
         }
 

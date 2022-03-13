@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using TenmoServer.Models;
 namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
-    
+    [Authorize]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -32,10 +33,10 @@ namespace TenmoServer.Controllers
             return accountDao.GetTransfers(userId);
         }
 
-        [HttpGet("transfer/{transferId}")]
-        public ActionResult<Transfer> GetTransferDetails(int transferId)
+        [HttpGet("{userId}/transfer/{transferId}")]
+        public ActionResult<Transfer> GetTransferDetails(int transferId, int userId)
         {
-            return accountDao.GetTransferById(transferId);
+            return accountDao.GetTransferById(transferId, userId);
         }
 
         [HttpPost("{transfer}")]
