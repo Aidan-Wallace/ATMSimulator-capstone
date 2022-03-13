@@ -92,8 +92,8 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-               
-                SendMoney(); 
+
+                SendMoney();
             }
 
             if (menuSelection == 5)
@@ -205,7 +205,10 @@ namespace TenmoClient
             int menuOption = console.PromptForInteger("Please enter transfer ID to approve/reject(0 to cancel)", 0);
 
             if (menuOption == 0) return;
+            
 
+
+            /*
             Transfer transfer = tenmoApiService.GetTransferById(menuOption, tenmoApiService.UserId);
 
             if (transfer.TransferId == 0)
@@ -217,6 +220,15 @@ namespace TenmoClient
                 console.PrintTransferDetails(transfer);
             }
             console.Pause();
+            */
+        }
+
+        public void HandlePendingTransfers(int transferId)
+        {
+            console.PrintApproveRejectMenu(transferId);
+            int menuOption = console.PromptForInteger("Please choose an option", 0, 2, 0);
+
+            tenmoApiService.HandlePendingRequests(transferId, menuOption);
         }
 
         public void SendMoney()

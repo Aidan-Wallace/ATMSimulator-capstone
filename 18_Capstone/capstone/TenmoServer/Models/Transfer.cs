@@ -37,4 +37,11 @@ namespace TenmoServer.Models
         public string ToUsername { get; set; }
         public decimal Amount { get; set; }
     }
+
+    public class UpdatePendingApproval
+    {
+        public int TransferId { get; set; }
+        public int TransferTypeId { get; set; }
+        public int TransferStatusId { get; set; }
+    }
 }

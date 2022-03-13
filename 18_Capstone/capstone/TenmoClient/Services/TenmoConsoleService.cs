@@ -109,7 +109,7 @@ namespace TenmoClient.Services
             }
             Console.WriteLine(" ---------");
         }
-        internal void PrintTransferDetails(Transfer transfer)
+        public void PrintTransferDetails(Transfer transfer)
         {
             Console.Clear();
             Console.WriteLine(" --------------------------------------------");
@@ -121,6 +121,15 @@ namespace TenmoClient.Services
             Console.WriteLine($" Type: {transfer.TransferTypeDescription}");
             Console.WriteLine($" Status: {transfer.TransferStatusDescription}");
             Console.WriteLine($" Amount: {transfer.TransferAmount.ToString("C2")}");
+        }
+
+        public void PrintApproveRejectMenu(int transferId)
+        {
+            Console.WriteLine(transferId);
+            Console.WriteLine(" 1: Approve");
+            Console.WriteLine(" 2: Reject");
+            Console.WriteLine(" 0: Don't approve or reject");
+            Console.WriteLine("---------");
         }
     }
 }

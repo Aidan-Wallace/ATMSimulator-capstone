@@ -44,7 +44,7 @@ namespace TenmoServer.Controllers
         {
             return accountDao.GetTransferById(transferId, userId);
         }
-        
+
 
         [HttpPost("transfer")]
         public ActionResult<bool> SendMoney(TransferMoney transfer)
@@ -56,6 +56,11 @@ namespace TenmoServer.Controllers
         public ActionResult<bool> RequesetMoney(TransferMoney transfer)
         {
             return Ok(accountDao.RequestMoney(transfer.FromUserId, transfer.ToUserId, transfer.TransferAmount));
+        }
+
+        [HttpPut("transfer/request/{transferId}")]
+        public void UpdateTransactionApproval(int transferId, UpdatePendingApproval updatedTransfer)
+        {
         }
     }
 }

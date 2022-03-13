@@ -168,5 +168,29 @@ namespace TenmoClient.Services
                 return response.Data;
             }
         }
+
+        internal void HandlePendingRequests(int transferId, int menuOption)
+        {
+            // New UpdateRequestApproval
+            UpdatePendingApproval newApproval = new UpdatePendingApproval()
+            {
+                TransferId = transferId,
+            };
+
+            if (menuOption == 1)
+            {
+
+            }
+            else if (menuOption == 2)
+            {
+
+            }
+            else
+            {
+                // return
+            }
+
+            RestRequest request = new RestRequest($"{ApiUrl}/account/transfer/{transferId}");
+        }
     }
 }
