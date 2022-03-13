@@ -85,11 +85,11 @@ namespace TenmoClient.Services
                 //Distinguishes money sent BY the user and money sent TO the user
                 if (currentUsername == transfer.FromUsername)
                 {
-                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(10)}       {transfer.TransferStatus}");
+                    Console.WriteLine($" {transfer.TransferId}          To:   {transfer.ToUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(5)}       {transfer.TransferStatus}");
                 }
                 else
                 {
-                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(10)}       {transfer.TransferStatus}");
+                    Console.WriteLine($" {transfer.TransferId}          From: {transfer.FromUsername.PadRight(15)} {transfer.Amount.ToString("C2").PadRight(5)}       {transfer.TransferStatus}");
                 }
             }
             Console.WriteLine(" ---------");
@@ -98,10 +98,10 @@ namespace TenmoClient.Services
         public void PrintPendingTransfersMenu(List<PendingTransfer> transfers)
         {
             Console.Clear();
-            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" --------------------------------------");
             Console.WriteLine(" Pending Transfer Requests");
-            Console.WriteLine(" ID          To                      Amount ");
-            Console.WriteLine(" -------------------------------------------");
+            Console.WriteLine(" ID          To                Amount  ");
+            Console.WriteLine(" --------------------------------------");
 
             foreach (PendingTransfer transfer in transfers)
             {
